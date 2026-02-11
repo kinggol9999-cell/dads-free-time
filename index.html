@@ -19,7 +19,7 @@
 <style>
 :root{--floor:rgba(148,163,184,0.95);--wall:#78350f;--tile-size:50px;--main-yellow:#fbbf24;--slide-speed:0.12s}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none;user-select:none}
-body{margin:0;background:url('배경화면.png') no-repeat center center;background-size:cover;background-color:#667eea;display:flex;flex-direction:column;align-items:center;font-family:'Malgun Gothic',sans-serif;height:100vh;width:100vw;overflow:hidden;touch-action:none}
+body{margin:0;background:url('배경화면.png') no-repeat center center;background-size:cover;background-color:#667eea;display:flex;flex-direction:column;align-items:center;font-family:'Malgun Gothic',sans-serif;height:100vh;height:100dvh;width:100vw;overflow:hidden;touch-action:none}
 
 #title-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:url('타이틀배경.png') no-repeat center bottom;background-size:cover;background-color:#1e3a8a;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:5vh;z-index:1000;text-align:center}
 #title-screen.hidden{display:none!important}
@@ -205,6 +205,40 @@ body{margin:0;background:url('배경화면.png') no-repeat center center;backgro
 .toast-btn{margin-top:16px;padding:10px 40px;background:#3b82f6;color:white;border:none;border-radius:12px;font-weight:900;font-size:0.9rem;cursor:pointer;touch-action:manipulation}
 .toast-btn:active{transform:scale(0.95)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* === LANDSCAPE MODE === */
+@media (orientation: landscape) {
+body{height:100vh;height:100dvh}
+.game-container{padding:3px}
+.top-bar{height:auto;min-height:40px;padding:3px 8px;margin-bottom:3px;gap:4px}
+.top-left-group{min-width:auto;gap:5px}
+.game-top-logo{width:35px;height:35px;border-radius:8px}
+.stage-title{font-size:0.7rem;padding:3px 8px}
+.top-right-group{gap:3px}
+.menu-btn{height:28px;padding:0 6px;font-size:0.65rem}
+.status-bar{padding:3px 8px;margin-bottom:3px;font-size:0.75rem;gap:8px}
+.game-area{border-radius:8px}
+#title-screen{padding-top:2vh}
+.logo-area{width:80px;height:80px;margin-bottom:5px}
+.game-title{font-size:1.5rem;margin-bottom:3px}
+.game-desc{font-size:0.85rem;margin-bottom:5px}
+.music-hint{font-size:0.7rem;margin-bottom:5px}
+.collection-row{gap:8px;margin-bottom:5px}
+.collection-box{width:40px;height:40px}
+.title-buttons{gap:5px}
+.modal-box{max-height:85vh;padding:12px}
+.modal-title{font-size:1rem;margin-bottom:8px}
+.pack-clear-img{width:100px;height:100px;margin:8px auto}
+.success-img{width:80px;margin:5px auto}
+}
+@media (orientation: landscape) and (max-height: 500px) {
+.top-bar{min-height:35px;padding:2px 6px;margin-bottom:2px}
+.game-top-logo{width:30px;height:30px}
+.stage-title{font-size:0.6rem;padding:2px 6px}
+.menu-btn{height:24px;font-size:0.6rem;padding:0 4px}
+.status-bar{padding:2px 6px;margin-bottom:2px;font-size:0.65rem}
+.logo-area{width:60px;height:60px}
+.game-title{font-size:1.2rem}
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -796,7 +830,7 @@ function initStage(){
     let st=Date.now();timerInterval=setInterval(()=>{currentSec=((Date.now()-st)/1000).toFixed(1);updateUI()},100);setTimeout(resizeBoard,50)
 }
 
-function resizeBoard(){const ga=document.querySelector('.game-area');if(!b||b.length===0||!ga||ga.clientHeight===0){setTimeout(resizeBoard,100);return}const s=Math.min(Math.floor((ga.clientHeight-20)/b.length),Math.floor((ga.clientWidth-20)/b[0].length),75);document.documentElement.style.setProperty('--tile-size',s+'px');draw()}
+function resizeBoard(){const ga=document.querySelector('.game-area');if(!b||b.length===0||!ga||ga.clientHeight===0){setTimeout(resizeBoard,100);return}const maxTile=window.innerWidth>window.innerHeight?100:75;const s=Math.min(Math.floor((ga.clientHeight-20)/b.length),Math.floor((ga.clientWidth-20)/b[0].length),maxTile);document.documentElement.style.setProperty('--tile-size',s+'px');draw()}
 
 function draw(){
     const bo=document.getElementById('game-board');bo.innerHTML='';if(!b||b.length===0)return;
@@ -902,6 +936,7 @@ function deleteCustomStage(idx){if(idx<48)return;const L=langData[currentLang]||
 function closeEditorToTitle(){closeAllModals();b=[];document.getElementById('game-board').innerHTML='';clearInterval(timerInterval);clearTimeout(dadIdleTimer);editingStageIndex=-1;editorMap=[];gameActive=false;document.getElementById('back-to-editor-btn').style.display='none';document.getElementById('title-screen').classList.remove('hidden')}
 function copyMapData(){const ms=JSON.stringify(editorMap)+",";if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ms).then(()=>showToast(currentLang==='en'?"Copied":"복사됨"));else{showToast(currentLang==='en'?"Check Console":"콘솔확인");console.log(ms)}}
 window.addEventListener('resize',()=>{const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid();resizeBoard()});
+window.addEventListener('orientationchange',()=>{setTimeout(()=>{resizeBoard();const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid()},200)});
 
 /* ===== Firebase 초기화 ===== */
 const firebaseConfig={apiKey:"AIzaSyC5mHZJ7xwYJZ2Y9TRZr7WzeRZ0Bjzr1Bk",authDomain:"dadsfreetime-sokoban.firebaseapp.com",projectId:"dadsfreetime-sokoban",storageBucket:"dadsfreetime-sokoban.firebasestorage.app",messagingSenderId:"540823431938",appId:"1:540823431938:web:61dab8d84b45883b4db01b"};
