@@ -676,7 +676,7 @@ let isTesting=false,currentLang='ko',gameActive=false;
 function getPackName(p){const m={en:'nameEn',ja:'nameJa',zh:'nameZh',de:'nameDe',es:'nameEs',fr:'nameFr',hi:'nameHi',mn:'nameMn'};return(m[currentLang]&&p[m[currentLang]])?p[m[currentLang]]:p.name}
 function getPackMsg(p){const m={en:'msgEn',ja:'msgJa',zh:'msgZh',de:'msgDe',es:'msgEs',fr:'msgFr',hi:'msgHi',mn:'msgMn'};return(m[currentLang]&&p[m[currentLang]])?p[m[currentLang]]:p.msg}
 function setLanguage(l){currentLang=l;closeModal('lang-modal');document.querySelectorAll('[data-lang]').forEach(el=>{const k=el.getAttribute('data-lang');if(langData[l]&&langData[l][k])el.innerHTML=langData[l][k]})}
-function getMirroredMap(m){if(!m)return null;return m.map(r=>[...r].reverse())}
+function getMirroredMap(m){if(!m)return null;return m.map(r=>[...r].reverse()).reverse()}
 function findDad(board){for(let y=0;y<board.length;y++)for(let x=0;x<board[y].length;x++)if(board[y][x]===2||board[y][x]===6)return{x,y};return null}
 function getStaticMap(){let si=(currentIdx>=1000)?currentIdx-1000:currentIdx;if(!stages[si])return null;let sm=JSON.parse(JSON.stringify(stages[si].map));if(currentIdx>=1000)sm=getMirroredMap(sm);return sm}
 
