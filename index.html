@@ -48,8 +48,6 @@ body{margin:0;background:url('배경화면.png') no-repeat center center;backgro
 .title-menu{display:flex;flex-direction:column;align-items:center;gap:20px;position:relative;z-index:2000;pointer-events:auto;width:90%;max-width:500px}
 .title-menu-main{width:100%;max-width:380px;padding:16px 24px;font-size:1.25rem;background:var(--main-yellow);border:none;border-radius:16px;color:#78350f;font-weight:900;cursor:pointer;box-shadow:0 4px 0 #b45309;touch-action:manipulation;transition:transform 0.1s;letter-spacing:0.3px}
 .title-menu-main:active{transform:translateY(3px);box-shadow:0 1px 0 #b45309}
-
-/* 하단 6개 메뉴를 가로 한 줄로 */
 .title-menu-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;width:100%;max-width:650px}
 .title-menu-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:12px 6px;border-radius:12px;border:none;cursor:pointer;font-weight:bold;font-size:0.7rem;touch-action:manipulation;transition:all 0.15s;white-space:nowrap}
 .title-menu-btn:active{transform:scale(0.95)}
@@ -61,13 +59,8 @@ body{margin:0;background:url('배경화면.png') no-repeat center center;backgro
 .title-menu-btn.btn-community{background:#8b5cf6;color:#fff}
 .title-menu-btn.btn-about{background:#3b82f6;color:#fff}
 .title-menu-btn.btn-lang{background:#fbbf24;color:#78350f}
-
-/* 기존 스타일 제거 */
 .title-menu-row-bottom{display:none}
 .title-menu-btn-sm{display:none}
-
-/* 저작권 문구 */
-.title-copyright{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.5);font-size:0.7rem;font-weight:normal;text-shadow:1px 1px 2px rgba(0,0,0,0.8);white-space:nowrap;pointer-events:none;z-index:10}
 
 .collect-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0}
 .collect-card{background:#f8fafc;border:3px solid #e2e8f0;border-radius:16px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all 0.3s;position:relative;overflow:hidden}
@@ -327,7 +320,15 @@ body{height:100vh;height:100dvh}
             <button class="title-menu-btn btn-lang" onclick="openModal('lang-modal')"><span class="menu-icon">🌐</span><span class="menu-text">Language</span></button>
         </div>
     </div>
-    <div class="title-copyright">© 2026 DAD GAMES. All Rights Reserved.</div>
+    <div style="width: 90%; max-width: 500px; height: 60px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; margin-top: 10px; font-size: 0.65rem; color: rgba(255,255,255,0.6); text-align: left; line-height: 1.4; z-index: 2000; pointer-events: auto;">
+        <strong>[About Dad's Free Time (Sokoban)]</strong><br>
+        "Dad's Free Time" is an innovative puzzle game built on classic Sokoban mechanics. Players help a dad character navigate through obstacles to bring a baby to their mom across various challenging retro-themed stages. Enjoy a nostalgic trip with themes like 'Dadcom', 'Dad-Mega', 'Super Dadcom', and 'Dad Station'. This game provides 48 primary stages and a robust Community Map Editor for user-generated content.<br><br>
+        <strong>[게임 소개 및 특징]</strong><br>
+        "아빠의 자유시간"은 클래식한 소코반 퍼즐을 기반으로 한 두뇌 계발 게임입니다. 아빠 캐릭터를 조작해 아이를 엄마에게 무사히 데려다주는 미션을 수행하며, 추억의 레트로 게임기 테마를 경험할 수 있습니다. 사용자가 직접 맵을 만들고 공유할 수 있는 기능도 제공합니다.<br><br>
+        <strong>[Privacy Policy / 개인정보처리방침]</strong><br>
+        We do not collect or store any personal identity information. This site uses Google AdSense to display advertisements. Google uses cookies to serve ads based on a user's prior visits. Users may opt out of personalized advertising by visiting Google Ads Settings.<br><br>
+        © 2026 DAD GAMES. All Rights Reserved. | Contact: kinggol9999@gmail.com
+    </div>
     <audio id="bgm" loop><source src="아빠의 눈치게임.mp3" type="audio/mp3"></audio>
 </div>
 
