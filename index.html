@@ -1016,7 +1016,19 @@ function checkHallOfFame(){let ac=true;if(stages.length<48)ac=false;for(let i=0;
 function resetStageRecord(){localStorage.removeItem(STORAGE_KEY+'_best_steps_'+currentIdx);localStorage.removeItem(STORAGE_KEY+'_best_time_'+currentIdx);localStorage.removeItem(STORAGE_KEY+'_stage_cleared_'+currentIdx);closeModal('reset-confirm');checkHallOfFame();updateUI();initStage()}
 
 function closePackClearModal(){closeAllModals();gameActive=false;clearInterval(timerInterval);b=[];document.getElementById('game-board').innerHTML='';document.getElementById('title-screen').classList.remove('hidden');if(checkWorldCompleted(0,12)&&currentIdx<12)openModal('world-clear-modal');else if(checkWorldCompleted(12,24)&&currentIdx>=12&&currentIdx<24)openModal('world-2-clear-modal');else if(checkWorldCompleted(24,36)&&currentIdx>=24&&currentIdx<36)openModal('world-3-clear-modal');else if(checkWorldCompleted(36,48)&&currentIdx>=36&&currentIdx<48)openModal('world-4-clear-modal');else{updateStageButtons(currentWorldIdx,'game');openModal('stage-menu')}}
-function closeSuccessModal(){closeAllModals();if(isTesting){showToast(currentLang==='en'?"Test Success!":"테스트 성공!");backToEditor()}else{if(currentIdx>=1000){const ni=currentIdx+1,oi=currentIdx-1000;let ip=false;for(let w in packConfig)packConfig[w].forEach(p=>{if(oi>=p.start&&oi<p.end-1)ip=true});if(ip)startGame(ni);else{gameActive=false;clearInterval(timerInterval);b=[];document.getElementById('game-board').innerHTML='';document.getElementById('title-screen').classList.remove('hidden');showToast(currentLang==='en'?"Hidden Pack Cleared!":"히든 스테이지 팩 정복 완료!");updateStageButtons(currentWorldIdx,'game');openModal('stage-menu')}}else if(currentIdx<stages.length-1){currentIdx++;initStage()}else location.reload()}}
+function closeSuccessModal(){
+    closeAllModals();
+    
+    // 안드로이드 앱에서 실행 중인지 확인하고, 맞다면 전면 광고 띄우기!
+    if(typeof Android!=="undefined"&&Android.showInterstitial){
+        try{
+            Android.showInterstitial();
+        }catch(e){
+            console.log("Ad error:",e);
+        }
+    }
+    
+    if(isTesting){showToast(currentLang==='en'?"Test Success!":"테스트 성공!");backToEditor()}else{if(currentIdx>=1000){const ni=currentIdx+1,oi=currentIdx-1000;let ip=false;for(let w in packConfig)packConfig[w].forEach(p=>{if(oi>=p.start&&oi<p.end-1)ip=true});if(ip)startGame(ni);else{gameActive=false;clearInterval(timerInterval);b=[];document.getElementById('game-board').innerHTML='';document.getElementById('title-screen').classList.remove('hidden');showToast(currentLang==='en'?"Hidden Pack Cleared!":"히든 스테이지 팩 정복 완료!");updateStageButtons(currentWorldIdx,'game');openModal('stage-menu')}}else if(currentIdx<stages.length-1){currentIdx++;initStage()}else location.reload()}}
 function closeWorldClearModal(){closeAllModals();gameActive=false;document.getElementById('title-screen').classList.remove('hidden');checkCollection()}
 
 let startX=0,startY=0;const touchZone=document.getElementById('touch-zone');
