@@ -1112,7 +1112,7 @@ function deleteCustomStage(idx){if(idx<48)return;const L=langData[currentLang]||
 function closeEditorToTitle(){closeAllModals();b=[];document.getElementById('game-board').innerHTML='';clearInterval(timerInterval);clearTimeout(dadIdleTimer);editingStageIndex=-1;editorMap=[];gameActive=false;document.getElementById('back-to-editor-btn').style.display='none';document.getElementById('title-screen').classList.remove('hidden')}
 function copyMapData(){const ms=JSON.stringify(editorMap)+",";if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ms).then(()=>showToast(currentLang==='en'?"Copied":"복사됨"));else{showToast(currentLang==='en'?"Check Console":"콘솔확인");console.log(ms)}}
 window.addEventListener('resize',()=>{const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid();resizeBoard()});
-window.addEventListener('orientationchange',()=>{setTimeout(()=>{if(typeof resizeBoard==='function')resizeBoard();const e=document.getElementById('map-editor');if(e&&e.style.display==='flex'&&typeof drawEditorGrid==='function')drawEditorGrid();},200)});
+window.addEventListener('orientationchange',()=>{setTimeout(()=>{resizeBoard();const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid()},200)});
 
 /* ===== Firebase 초기화 ===== */
 const firebaseConfig={apiKey:"AIzaSyC5mHZJ7xwYJZ2Y9TRZr7WzeRZ0Bjzr1Bk",authDomain:"dadsfreetime-sokoban.firebaseapp.com",projectId:"dadsfreetime-sokoban",storageBucket:"dadsfreetime-sokoban.firebasestorage.app",messagingSenderId:"540823431938",appId:"1:540823431938:web:61dab8d84b45883b4db01b"};
