@@ -937,7 +937,7 @@ function openHowToPlayModal(from){howToPlayFrom=from||'title';closeModal('world-
 function openAboutModal(){openModal('about-modal')}
 function closeHowToPlayModal(){closeModal('how-to-play-modal');if(howToPlayFrom==='world')openModal('world-menu')}
 function selectWorld(i){closeModal('world-menu');currentWorldIdx=i;updateStageButtons(i,'game');openModal('stage-menu')}
-function startGame(i){currentIdx=i;gameActive=true;document.getElementById('title-screen').classList.add('hidden');document.getElementById('back-to-editor-btn').style.display='none';initStage()}
+function startGame(i){restartCount=0;updateRestartCount();currentIdx=i;gameActive=true;document.getElementById('title-screen').classList.add('hidden');document.getElementById('back-to-editor-btn').style.display='none';initStage()}
 function openEditStageMenu(){document.getElementById('title-screen').classList.add('hidden');openModal('edit-world-menu')}
 function selectEditorWorld(i){closeModal('edit-world-menu');updateStageButtons(i,'editor');openModal('edit-stage-menu')}
 function closeEditWorldMenu(){closeModal('edit-world-menu');document.getElementById('title-screen').classList.remove('hidden')}
@@ -973,7 +973,7 @@ function updatePackIcon(stageIdx){
     if(!found)icon.src='icon-512.png';
 }
 
-function initStage(){restartCount=0;updateRestartCount();
+function initStage(){
     let ti=currentIdx,isH=false;if(currentIdx>=1000){ti=currentIdx-1000;isH=true;document.querySelector('.game-container').classList.add('mirror-mode')}else document.querySelector('.game-container').classList.remove('mirror-mode');
     if(!stages[ti])return;const s=stages[ti];let dt=s.title;
     if(isH)dt=`${langData[currentLang].hiddenStage} #${ti+1}`;else{for(let w in packConfig)packConfig[w].forEach(p=>{if(ti>=p.start&&ti<p.end)dt=`${getPackName(p)} #${(ti-p.start)+1}`})}
@@ -1079,7 +1079,7 @@ function checkClear(sm){
     }
 }
 
-function showSuccess(){// 스테이지 클리어 광고
+function showSuccess(){restartCount=0;updateRestartCount();// 스테이지 클리어 광고
     if(typeof Android!=="undefined"&&Android.showInterstitial){
         try{Android.showInterstitial();}catch(e){console.log("Ad:",e);}
     }
@@ -1112,7 +1112,7 @@ function deleteCustomStage(idx){if(idx<48)return;const L=langData[currentLang]||
 function closeEditorToTitle(){closeAllModals();b=[];document.getElementById('game-board').innerHTML='';clearInterval(timerInterval);clearTimeout(dadIdleTimer);editingStageIndex=-1;editorMap=[];gameActive=false;document.getElementById('back-to-editor-btn').style.display='none';document.getElementById('title-screen').classList.remove('hidden')}
 function copyMapData(){const ms=JSON.stringify(editorMap)+",";if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ms).then(()=>showToast(currentLang==='en'?"Copied":"복사됨"));else{showToast(currentLang==='en'?"Check Console":"콘솔확인");console.log(ms)}}
 window.addEventListener('resize',()=>{const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid();resizeBoard()});
-window.addEventListener('orientationchange',()=>{setTimeout(()=>{resizeBoard();const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid()},200)});
+window.addEventListener('orientationchange',()=>{setTimeout(()=>{if(typeof resizeBoard==='function')resizeBoard();const e=document.getElementById('map-editor');if(e&&e.style.display==='flex'&&typeof drawEditorGrid==='function')drawEditorGrid();},200)});
 
 /* ===== Firebase 초기화 ===== */
 const firebaseConfig={apiKey:"AIzaSyC5mHZJ7xwYJZ2Y9TRZr7WzeRZ0Bjzr1Bk",authDomain:"dadsfreetime-sokoban.firebaseapp.com",projectId:"dadsfreetime-sokoban",storageBucket:"dadsfreetime-sokoban.firebasestorage.app",messagingSenderId:"540823431938",appId:"1:540823431938:web:61dab8d84b45883b4db01b"};
