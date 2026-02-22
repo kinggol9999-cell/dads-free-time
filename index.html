@@ -372,10 +372,10 @@ body{height:100vh;height:100dvh}
 <div class="modal-overlay" id="about-modal"><div class="modal-box" style="max-width:600px;max-height:85vh;overflow-y:auto;">
     <div class="modal-title" data-lang="aboutTitle">About & Privacy Policy</div>
     <div style="text-align:left;padding:15px;color:#1e293b;line-height:1.8;">
-        <p style="margin:10px 0;" data-lang="aboutDesc">Game description</p>
-        <p style="margin:10px 0;font-weight:bold;color:#3b82f6;" data-lang="aboutAds">Ads info</p>
-        <p style="margin:10px 0;" data-lang="aboutPrivacy">Privacy</p>
-        <p style="margin:10px 0;" data-lang="aboutContact">Contact</p>
+        <p style="margin:10px 0;" data-lang="aboutDesc">아빠의 자유시간은 클래식한 소코반 퍼즐 게임입니다. 48개 스테이지와 커뮤니티 맵 에디터를 제공합니다.</p>
+        <p style="margin:10px 0;font-weight:bold;color:#3b82f6;" data-lang="aboutAds">💰 광고 안내: 스테이지 클리어 시, 무르기 5회 사용 시, 재시작 버튼 클릭 시 광고가 표시됩니다.</p>
+        <p style="margin:10px 0;" data-lang="aboutPrivacy">개인정보는 수집하지 않으며, Google 애드센스 광고를 사용합니다.</p>
+        <p style="margin:10px 0;" data-lang="aboutContact">문의: kinggol9999@gmail.com</p>
         <p style="margin:15px 0 5px;color:#64748b;font-size:0.85rem;">© 2026 DAD GAMES. All rights reserved.</p>
     </div>
     <button class="ui-btn btn-primary" onclick="closeModal('about-modal')" data-lang="closeBtn">닫기</button>
@@ -1075,7 +1075,15 @@ function resetStageRecord(){localStorage.removeItem(STORAGE_KEY+'_best_steps_'+c
 
 function closePackClearModal(){closeAllModals();gameActive=false;clearInterval(timerInterval);b=[];document.getElementById('game-board').innerHTML='';document.getElementById('title-screen').classList.remove('hidden');if(checkWorldCompleted(0,12)&&currentIdx<12)openModal('world-clear-modal');else if(checkWorldCompleted(12,24)&&currentIdx>=12&&currentIdx<24)openModal('world-2-clear-modal');else if(checkWorldCompleted(24,36)&&currentIdx>=24&&currentIdx<36)openModal('world-3-clear-modal');else if(checkWorldCompleted(36,48)&&currentIdx>=36&&currentIdx<48)openModal('world-4-clear-modal');else{updateStageButtons(currentWorldIdx,'game');openModal('stage-menu')}}
 function closeSuccessModal(){closeAllModals();if(isTesting){showToast(currentLang==='en'?"Test Success!":"테스트 성공!");backToEditor()}else{if(currentIdx>=1000){const ni=currentIdx+1,oi=currentIdx-1000;let ip=false;for(let w in packConfig)packConfig[w].forEach(p=>{if(oi>=p.start&&oi<p.end-1)ip=true});if(ip)startGame(ni);else{gameActive=false;clearInterval(timerInterval);b=[];document.getElementById('game-board').innerHTML='';document.getElementById('title-screen').classList.remove('hidden');showToast(currentLang==='en'?"Hidden Pack Cleared!":"히든 스테이지 팩 정복 완료!");updateStageButtons(currentWorldIdx,'game');openModal('stage-menu')}}else if(currentIdx<stages.length-1){currentIdx++;initStage()}else location.reload()}}
-function closeWorldClearModal(){closeAllModals();gameActive=false;document.getElementById('title-screen').classList.remove('hidden');checkCollection()}
+function closeWorldClearModal(){
+    if(typeof Android!=="undefined"&&Android.showInterstitial){
+        try{Android.showInterstitial();}catch(e){console.log("Ad:",e);}
+    }
+    closeAllModals();
+    gameActive=false;
+    document.getElementById('title-screen').classList.remove('hidden');
+    checkCollection();
+}
 
 let startX=0,startY=0;const touchZone=document.getElementById('touch-zone');
 if(touchZone){touchZone.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;startY=e.touches[0].clientY},{passive:true});touchZone.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;if(document.body.classList.contains('force-landscape')){const t=dx;dx=dy;dy=-t}if(Math.abs(dx)>Math.abs(dy)){if(Math.abs(dx)>30)move(dx>0?1:-1,0)}else{if(Math.abs(dy)>30)move(0,dy>0?1:-1)}},{passive:true})}
