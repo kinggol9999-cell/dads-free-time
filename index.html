@@ -335,7 +335,7 @@ body{height:100vh;height:100dvh}
             <button class="title-menu-btn btn-lang" onclick="openModal('lang-modal')"><span class="menu-icon">🌐</span><span class="menu-text">Language</span></button>
         </div>
     </div>
-    <div class="title-copyright">© 2026 DAD GAMES. All Rights Reserved. | Contact: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="771c1e191010181b4e4e4e4e37101a161e1b5914181a">[email&#160;protected]</a></div>
+    <div class="title-copyright">© 2026 DAD GAMES. All Rights Reserved. | Contact: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0e65676069696162373737374e69636f6762206d6163">[email&#160;protected]</a></div>
     <audio id="bgm" loop><source src="아빠의 눈치게임.mp3" type="audio/mp3"></audio>
 </div>
 
@@ -772,9 +772,16 @@ function findDad(board){for(let y=0;y<board.length;y++)for(let x=0;x<board[y].le
 function getStaticMap(){let si=(currentIdx>=1000)?currentIdx-1000:currentIdx;if(!stages[si])return null;let sm=JSON.parse(JSON.stringify(stages[si].map));if(currentIdx>=1000)sm=getMirroredMap(sm);return sm}
 
 function startWithFullScreen(){if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(e=>{});openModal('world-menu')}
-window.addEventListener('load',()=>{history.pushState({page:'home'},document.title,location.href);loadSystem()});
-let _orientationChanging=false;
-window.addEventListener('popstate',()=>{if(_orientationChanging)return;const t=document.getElementById('title-screen');if(!t.classList.contains('hidden')){history.pushState({page:'home'},document.title,location.href)}else{history.pushState({page:'game'},document.title,location.href);openModal('quit-confirm')}});
+window.addEventListener('load',()=>{history.pushState({page:'game'},document.title,location.href);loadSystem();});
+window.addEventListener('popstate',()=>{
+    // 화면 회전 등으로 인한 오발동 방지: gameActive 기준으로만 판단
+    if(gameActive){
+        history.pushState({page:'game'},document.title,location.href);
+        openModal('quit-confirm');
+    }else{
+        history.pushState({page:'game'},document.title,location.href);
+    }
+});
 function confirmQuit(){closeAllModals();gameActive=false;document.getElementById('title-screen').classList.remove('hidden')}
 
 function loadSystem(){const s=localStorage.getItem(STORAGE_KEY);let ld=[];if(s){try{ld=JSON.parse(s)}catch(e){}}stages=[];for(let i=0;i<48;i++)stages.push({title:`STAGE ${Math.floor(i/4)+1}-${(i%4)+1}`,map:defaultMaps[i]||[[1,1,1],[1,2,1],[1,5,1]]});if(ld.length>48)for(let i=48;i<ld.length;i++)stages.push(ld[i]);localStorage.setItem(STORAGE_KEY,JSON.stringify(stages));checkHallOfFame();checkCollection()}
@@ -1112,8 +1119,14 @@ function doPasteMap(){let c=document.getElementById('paste-input').value;if(!c){
 function deleteCustomStage(idx){if(idx<48)return;const L=langData[currentLang]||langData.ko;const ci=idx-47;const sName=stages[idx].title||('CUSTOM '+ci);showToast(`🗑️ ${L.deleteStageConfirm||'삭제하시겠습니까?'}\n\n#${ci}: ${sName}`,'🗑️');setTimeout(()=>{const overlay=document.querySelector('.toast-overlay');if(!overlay)return;const box=overlay.querySelector('.toast-box');const confirmBtn=document.createElement('button');confirmBtn.className='toast-btn';confirmBtn.style.cssText='background:#ef4444;margin-left:8px;';confirmBtn.textContent=L.delBtn||'🗑️ 삭제';confirmBtn.onclick=()=>{overlay.remove();stages.splice(idx,1);localStorage.setItem(STORAGE_KEY,JSON.stringify(stages));for(let k=idx;k<stages.length+1;k++)localStorage.removeItem(STORAGE_KEY+'_stage_cleared_'+k);loadSystem();closeAllModals();openEditStageMenu();updateStageButtons(4,'editor')};box.querySelector('.toast-btn').textContent=L.cancelBtn||'취소';box.querySelector('.toast-btn').style.background='#94a3b8';box.appendChild(confirmBtn)},50)}
 function closeEditorToTitle(){closeAllModals();b=[];document.getElementById('game-board').innerHTML='';clearInterval(timerInterval);clearTimeout(dadIdleTimer);editingStageIndex=-1;editorMap=[];gameActive=false;document.getElementById('back-to-editor-btn').style.display='none';document.getElementById('title-screen').classList.remove('hidden')}
 function copyMapData(){const ms=JSON.stringify(editorMap)+",";if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ms).then(()=>showToast(currentLang==='en'?"Copied":"복사됨"));else{showToast(currentLang==='en'?"Check Console":"콘솔확인");console.log(ms)}}
-window.addEventListener('resize',()=>{_orientationChanging=true;setTimeout(()=>{_orientationChanging=false},1000);const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid();resizeBoard()});
-window.addEventListener('orientationchange',()=>{_orientationChanging=true;setTimeout(()=>{_orientationChanging=false},1000);setTimeout(()=>{if(gameActive)resizeBoard();const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid()},300)});
+window.addEventListener('resize',()=>{const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid();resizeBoard();});
+window.addEventListener('orientationchange',()=>{setTimeout(()=>{
+    resizeBoard();
+    const e=document.getElementById('map-editor');
+    if(e&&e.style.display==='flex')drawEditorGrid();
+    // 회전 후 게임 중이면 타이틀 숨김 유지
+    if(gameActive){document.getElementById('title-screen').classList.add('hidden');}
+},300);});
 
 /* ===== Firebase 초기화 ===== */
 const firebaseConfig={apiKey:"AIzaSyC5mHZJ7xwYJZ2Y9TRZr7WzeRZ0Bjzr1Bk",authDomain:"dadsfreetime-sokoban.firebaseapp.com",projectId:"dadsfreetime-sokoban",storageBucket:"dadsfreetime-sokoban.firebasestorage.app",messagingSenderId:"540823431938",appId:"1:540823431938:web:61dab8d84b45883b4db01b"};
@@ -1378,4 +1391,4 @@ async function confirmPassword(){
 })();
 </script>
 </body>
-</html>
+                                                                                                                                                </html>
