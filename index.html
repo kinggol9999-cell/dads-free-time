@@ -94,7 +94,14 @@ body{margin:0;background:url('배경화면.png') no-repeat center center;backgro
 .stage-title{font-weight:900;font-size:1.0rem;color:#fff;text-shadow:2px 2px 0 #000;white-space:nowrap;background:rgba(0,0,0,0.4);padding:5px 10px;border-radius:15px;border:2px solid rgba(255,255,255,0.5);display:block!important}
 .top-right-group{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;width:100%}
 .menu-btn{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:6px;height:34px;padding:0 8px;font-size:0.75rem;font-weight:bold;cursor:pointer;color:white;touch-action:manipulation;z-index:200}
-.status-bar{display:flex;justify-content:center;gap:15px;background:rgba(0,0,0,0.15);border-radius:8px;padding:8px;color:white;font-weight:bold;margin-bottom:5px}
+.status-bar{display:flex;justify-content:center;align-items:center;gap:12px;background:rgba(0,0,0,0.15);border-radius:8px;padding:5px 8px;color:white;font-weight:bold;margin-bottom:5px;min-height:36px}
+.status-col{display:flex;align-items:center;gap:4px;white-space:nowrap;flex-shrink:0}
+.stat-label{font-size:0.8rem;opacity:0.85}
+.stat-now{font-size:0.9rem;color:#fbbf24;min-width:24px;text-align:right}
+.stat-sep{font-size:0.7rem;opacity:0.5;margin:0 1px}
+.stat-best-label{font-size:0.7rem;opacity:0.7}
+.stat-best{font-size:0.75rem;color:#86efac;min-width:24px}
+.status-divider{width:1px;height:20px;background:rgba(255,255,255,0.3);flex-shrink:0}
 
 .game-area{flex:1;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;position:relative}
 #game-board{display:grid;gap:0;background:transparent;border:none;position:relative;overflow:hidden}
@@ -270,7 +277,7 @@ body{height:100vh;height:100dvh}
 .stage-title{font-size:0.7rem;padding:3px 8px}
 .top-right-group{gap:3px}
 .menu-btn{height:28px;padding:0 6px;font-size:0.65rem}
-.status-bar{padding:3px 8px;margin-bottom:3px;font-size:0.75rem;gap:8px}
+
 .game-area{border-radius:8px}
 #title-screen{justify-content:center;padding:10px}
 .game-title{font-size:1.3rem;margin-bottom:1px}
@@ -293,7 +300,7 @@ body{height:100vh;height:100dvh}
 .game-top-logo{width:30px;height:30px}
 .stage-title{font-size:0.6rem;padding:2px 6px}
 .menu-btn{height:24px;font-size:0.6rem;padding:0 4px}
-.status-bar{padding:2px 6px;margin-bottom:2px;font-size:0.65rem}
+
 .game-title{font-size:1.1rem}
 .title-logo{width:28px;height:28px}
 .title-menu{gap:2px}
@@ -354,9 +361,9 @@ body{height:100vh;height:100dvh}
         </div>
     </div>
     <div class="status-bar">
-        <div class="status-item"><span id="step-info">👣 걸음: 0</span></div>
-        <div style="width:1px;background:rgba(255,255,255,0.3);margin:0 10px;"></div>
-        <div class="status-item"><span id="time-info">⏱️ 시간: 0초</span></div>
+        <div class="status-col"><span class="stat-label">👣 걸음</span><span id="step-now" class="stat-now">0</span><span class="stat-sep">|</span><span class="stat-best-label">최고</span><span id="step-best" class="stat-best">-</span></div>
+        <div class="status-divider"></div>
+        <div class="status-col"><span class="stat-label">⏱️ 시간</span><span id="time-now" class="stat-now">0초</span><span class="stat-sep">|</span><span class="stat-best-label">최고</span><span id="time-best" class="stat-best">-</span></div>
     </div>
     <div class="game-area" id="touch-zone"><div id="game-board"></div></div>
     <button id="back-to-editor-btn" class="back-to-editor" style="display:none;" onclick="backToEditor()" data-lang="backEditorBtn">📝 에디터 복귀</button>
@@ -1091,7 +1098,7 @@ function showSuccess(){restartCount=0;updateRestartCount();// 스테이지 클�
     undoCount=0;updateUndoCount();
     const bs=localStorage.getItem(STORAGE_KEY+'_best_steps_'+currentIdx)||" - ",bt=localStorage.getItem(STORAGE_KEY+'_best_time_'+currentIdx)||" - ",ld=langData[currentLang];document.getElementById('success-msg').innerHTML=`<div style="font-size:1.1rem;color:#3b82f6;font-weight:bold;margin-bottom:5px;">${ld.successMsgDefault}</div>${ld.step}: ${steps} / ${ld.time}: ${currentSec}${ld.sec}<br><span style="font-size:12px;color:#999;">${ld.best}: ${bs} / ${bt}</span>`;setTimeout(()=>openModal('success-modal'),300)}
 function saveRecords(){const sk=STORAGE_KEY+'_best_steps_'+currentIdx,tk=STORAGE_KEY+'_best_time_'+currentIdx;const ps=localStorage.getItem(sk);if(!ps||steps<parseInt(ps))localStorage.setItem(sk,steps);const pt=localStorage.getItem(tk);if(!pt||parseFloat(currentSec)<parseFloat(pt))localStorage.setItem(tk,currentSec);localStorage.setItem(STORAGE_KEY+'_stage_cleared_'+currentIdx,"true");checkHallOfFame();checkCollection()}
-function updateUI(){const bs=localStorage.getItem(STORAGE_KEY+'_best_steps_'+currentIdx)||"-",bt=localStorage.getItem(STORAGE_KEY+'_best_time_'+currentIdx)||"-",ld=langData[currentLang];document.getElementById('step-info').innerText=`${ld.step}: ${steps} (${ld.best}:${bs})`;document.getElementById('time-info').innerText=`${ld.time}: ${currentSec}${ld.sec} (${ld.best}:${bt})`}
+function updateUI(){const bs=localStorage.getItem(STORAGE_KEY+'_best_steps_'+currentIdx)||"-",bt=localStorage.getItem(STORAGE_KEY+'_best_time_'+currentIdx)||"-",ld=langData[currentLang];document.getElementById('step-now').innerText=steps;document.getElementById('step-best').innerText=(bs||'-');document.getElementById('time-now').innerText=currentSec+(ld.sec||'초');document.getElementById('time-best').innerText=(bt||'-')}
 function checkHallOfFame(){let ac=true;if(stages.length<48)ac=false;for(let i=0;i<48;i++)if(!localStorage.getItem(STORAGE_KEY+'_stage_cleared_'+i)){ac=false;break}const bg=document.getElementById('hall-of-fame');if(bg){if(ac)bg.classList.remove('hidden');else bg.classList.add('hidden')}}
 function resetStageRecord(){localStorage.removeItem(STORAGE_KEY+'_best_steps_'+currentIdx);localStorage.removeItem(STORAGE_KEY+'_best_time_'+currentIdx);localStorage.removeItem(STORAGE_KEY+'_stage_cleared_'+currentIdx);closeModal('reset-confirm');checkHallOfFame();updateUI();initStage()}
 
@@ -1387,4 +1394,4 @@ async function confirmPassword(){
 })();
 </script>
 </body>
-                                                                                                                                                                                                   </html>
+                                                    </html>
