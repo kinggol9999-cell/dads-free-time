@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ko">
 <head>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8542385201004559" crossorigin="anonymous"></script>
@@ -335,7 +335,7 @@ body{height:100vh;height:100dvh}
             <button class="title-menu-btn btn-lang" onclick="openModal('lang-modal')"><span class="menu-icon">🌐</span><span class="menu-text">Language</span></button>
         </div>
     </div>
-    <div class="title-copyright">© 2026 DAD GAMES. All Rights Reserved. | Contact: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="690200070e0e060550505050290e04080005470a0604">[email&#160;protected]</a></div>
+    <div class="title-copyright">© 2026 DAD GAMES. All Rights Reserved. | Contact: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="771c1e191010181b4e4e4e4e37101a161e1b5914181a">[email&#160;protected]</a></div>
     <audio id="bgm" loop><source src="아빠의 눈치게임.mp3" type="audio/mp3"></audio>
 </div>
 
@@ -390,7 +390,7 @@ body{height:100vh;height:100dvh}
         <p style="margin:10px 0;" data-lang="aboutDesc">아빠의 자유시간은 클래식한 소코반 퍼즐 게임입니다. 48개 스테이지와 커뮤니티 맵 에디터를 제공합니다.</p>
         <p style="margin:10px 0;font-weight:bold;color:#3b82f6;" data-lang="aboutAds">💰 광고 안내: 스테이지 클리어, 팩 완료, 무르기 10회, 재시작 3회 시 광고가 표시됩니다.</p>
         <p style="margin:10px 0;" data-lang="aboutPrivacy">개인정보는 수집하지 않으며, Google 애드센스 광고를 사용합니다.</p>
-        <p style="margin:10px 0;" data-lang="aboutContact">문의: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="84efedeae3e3ebe8bdbdbdbdc4e3e9e5ede8aae7ebe9">[email&#160;protected]</a></p>
+        <p style="margin:10px 0;" data-lang="aboutContact">문의: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="711a181f16161e1d4848484831161c10181d5f121e1c">[email&#160;protected]</a></p>
         <p style="margin:15px 0 5px;color:#64748b;font-size:0.85rem;">© 2026 DAD GAMES. All rights reserved.</p>
     </div>
     <button class="ui-btn btn-primary" onclick="closeModal('about-modal')" data-lang="closeBtn">닫기</button>
@@ -1208,7 +1208,17 @@ async function toggleLike(docId,idx){
             m.likes=Math.max(0,(m.likes||0)-1);
         }else{
             lk.push(docId);
-            await mapsCol.doc(docId).e.firestore.FieldValue.increment(1)}).catch(e=>console.log(e));
+            await mapsCol.doc(docId).update({likes:firebase.firestore.FieldValue.increment(1)});
+            m.likes=(m.likes||0)+1;
+        }
+        localStorage.setItem('dad_comm_likes2',JSON.stringify(lk));
+    }catch(e){console.error('Like error:',e)}
+    renderCommBody();
+}
+
+function playCommMap(idx){
+    const m=commMaps[idx];if(!m)return;
+    mapsCol.doc(m._id).update({plays:firebase.firestore.FieldValue.increment(1)}).catch(e=>console.log(e));
     const ts={title:m.name||'COMMUNITY',map:JSON.parse(JSON.stringify(m.map))};
     const ti=stages.findIndex(s=>s.title==='__COMM__');
     if(ti>=0)stages.splice(ti,1);
