@@ -334,7 +334,7 @@ body{height:100vh;height:100dvh}
             <button class="title-menu-btn btn-lang" onclick="openModal('lang-modal')"><span class="menu-icon">🌐</span><span class="menu-text">Language</span></button>
         </div>
     </div>
-    <div class="title-copyright">© 2026 DAD GAMES. All Rights Reserved. | Contact: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="63080a0d04040c0f5a5a5a5a23040e020a0f4d000c0e">[email&#160;protected]</a></div>
+    <div class="title-copyright">© 2026 DAD GAMES. All Rights Reserved. | Contact: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e3888a8d84848c8fdadadadaa3848e828a8fcd808c8e">[email&#160;protected]</a></div>
     <audio id="bgm" loop><source src="아빠의 눈치게임.mp3" type="audio/mp3"></audio>
 </div>
 
@@ -389,7 +389,7 @@ body{height:100vh;height:100dvh}
         <p style="margin:10px 0;" data-lang="aboutDesc">아빠의 자유시간은 클래식한 소코반 퍼즐 게임입니다. 48개 스테이지와 커뮤니티 맵 에디터를 제공합니다.</p>
         <p style="margin:10px 0;font-weight:bold;color:#3b82f6;" data-lang="aboutAds">💰 광고 안내: 스테이지 클리어, 팩 완료, 무르기 10회, 재시작 3회 시 광고가 표시됩니다.</p>
         <p style="margin:10px 0;" data-lang="aboutPrivacy">개인정보는 수집하지 않으며, Google 애드센스 광고를 사용합니다.</p>
-        <p style="margin:10px 0;" data-lang="aboutContact">문의: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dcb7b5b2bbbbb3b0e5e5e5e59cbbb1bdb5b0f2bfb3b1">[email&#160;protected]</a></p>
+        <p style="margin:10px 0;" data-lang="aboutContact">문의: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fd9694939a9a9291c4c4c4c4bd9a909c9491d39e9290">[email&#160;protected]</a></p>
         <p style="margin:15px 0 5px;color:#64748b;font-size:0.85rem;">© 2026 DAD GAMES. All rights reserved.</p>
     </div>
     <button class="ui-btn btn-primary" onclick="closeModal('about-modal')" data-lang="closeBtn">닫기</button>
@@ -773,19 +773,12 @@ function getStaticMap(){let si=(currentIdx>=1000)?currentIdx-1000:currentIdx;if(
 function startWithFullScreen(){if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(e=>{});openModal('world-menu')}
 window.addEventListener('load',()=>{
     loadSystem();
-    // 화면 회전으로 인한 reload 시 게임 상태 복원
     const resumeIdx=sessionStorage.getItem('sokoban_resume_idx');
     if(resumeIdx!==null){
         const idx=parseInt(resumeIdx);
-        setTimeout(()=>{
-            if(stages[idx]){
-                startGame(idx);
-            }
-        },200);
+        setTimeout(()=>{if(stages[idx])startGame(idx);},300);
     }
 });
-// popstate 제거 - 화면 회전 시 오발동으로 타이틀 이동 버그 원인
-// 뒤로가기는 게임 내 홈버튼으로만 처리
 function confirmQuit(){closeAllModals();gameActive=false;sessionStorage.removeItem('sokoban_resume_idx');document.getElementById('title-screen').classList.remove('hidden')}
 
 function loadSystem(){const s=localStorage.getItem(STORAGE_KEY);let ld=[];if(s){try{ld=JSON.parse(s)}catch(e){}}stages=[];for(let i=0;i<48;i++)stages.push({title:`STAGE ${Math.floor(i/4)+1}-${(i%4)+1}`,map:defaultMaps[i]||[[1,1,1],[1,2,1],[1,5,1]]});if(ld.length>48)for(let i=48;i<ld.length;i++)stages.push(ld[i]);localStorage.setItem(STORAGE_KEY,JSON.stringify(stages));checkHallOfFame();checkCollection()}
@@ -1124,17 +1117,12 @@ function deleteCustomStage(idx){if(idx<48)return;const L=langData[currentLang]||
 function closeEditorToTitle(){closeAllModals();b=[];document.getElementById('game-board').innerHTML='';clearInterval(timerInterval);clearTimeout(dadIdleTimer);editingStageIndex=-1;editorMap=[];gameActive=false;document.getElementById('back-to-editor-btn').style.display='none';document.getElementById('title-screen').classList.remove('hidden')}
 function copyMapData(){const ms=JSON.stringify(editorMap)+",";if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ms).then(()=>showToast(currentLang==='en'?"Copied":"복사됨"));else{showToast(currentLang==='en'?"Check Console":"콘솔확인");console.log(ms)}}
 window.addEventListener('resize',()=>{const e=document.getElementById('map-editor');if(e&&e.style.display==='flex')drawEditorGrid();resizeBoard()});
-window.addEventListener('orientationchange',()=>{
-    setTimeout(()=>{
-        resizeBoard();
-        const e=document.getElementById('map-editor');
-        if(e&&e.style.display==='flex')drawEditorGrid();
-        // 회전 후 게임 중이면 타이틀이 보이지 않게 강제 유지
-        if(gameActive){
-            document.getElementById('title-screen').classList.add('hidden');
-        }
-    },300);
-});
+window.addEventListener('orientationchange',()=>{setTimeout(()=>{
+    resizeBoard();
+    const e=document.getElementById('map-editor');
+    if(e&&e.style.display==='flex')drawEditorGrid();
+    if(gameActive){document.getElementById('title-screen').classList.add('hidden');}
+},300);});
 
 /* ===== Firebase 초기화 ===== */
 const firebaseConfig={apiKey:"AIzaSyC5mHZJ7xwYJZ2Y9TRZr7WzeRZ0Bjzr1Bk",authDomain:"dadsfreetime-sokoban.firebaseapp.com",projectId:"dadsfreetime-sokoban",storageBucket:"dadsfreetime-sokoban.firebasestorage.app",messagingSenderId:"540823431938",appId:"1:540823431938:web:61dab8d84b45883b4db01b"};
@@ -1398,6 +1386,5 @@ async function confirmPassword(){
     };
 })();
 </script>
-
 </body>
-                                                                                                                                                                                                                 </html>
+                                                                                                                                                                                                   </html>
