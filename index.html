@@ -771,10 +771,22 @@ function findDad(board){for(let y=0;y<board.length;y++)for(let x=0;x<board[y].le
 function getStaticMap(){let si=(currentIdx>=1000)?currentIdx-1000:currentIdx;if(!stages[si])return null;let sm=JSON.parse(JSON.stringify(stages[si].map));if(currentIdx>=1000)sm=getMirroredMap(sm);return sm}
 
 function startWithFullScreen(){if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(e=>{});openModal('world-menu')}
-window.addEventListener('load',()=>{loadSystem();});
+window.addEventListener('load',()=>{
+    loadSystem();
+    // 화면 회전으로 인한 reload 시 게임 상태 복원
+    const resumeIdx=sessionStorage.getItem('sokoban_resume_idx');
+    if(resumeIdx!==null){
+        const idx=parseInt(resumeIdx);
+        setTimeout(()=>{
+            if(stages[idx]){
+                startGame(idx);
+            }
+        },200);
+    }
+});
 // popstate 제거 - 화면 회전 시 오발동으로 타이틀 이동 버그 원인
 // 뒤로가기는 게임 내 홈버튼으로만 처리
-function confirmQuit(){closeAllModals();gameActive=false;document.getElementById('title-screen').classList.remove('hidden')}
+function confirmQuit(){closeAllModals();gameActive=false;sessionStorage.removeItem('sokoban_resume_idx');document.getElementById('title-screen').classList.remove('hidden')}
 
 function loadSystem(){const s=localStorage.getItem(STORAGE_KEY);let ld=[];if(s){try{ld=JSON.parse(s)}catch(e){}}stages=[];for(let i=0;i<48;i++)stages.push({title:`STAGE ${Math.floor(i/4)+1}-${(i%4)+1}`,map:defaultMaps[i]||[[1,1,1],[1,2,1],[1,5,1]]});if(ld.length>48)for(let i=48;i<ld.length;i++)stages.push(ld[i]);localStorage.setItem(STORAGE_KEY,JSON.stringify(stages));checkHallOfFame();checkCollection()}
 function checkCollection(){const worlds=[[11,'trophy-1-12','cc-0'],[23,'trophy-2-12','cc-1'],[35,'trophy-3-12','cc-2'],[47,'trophy-4-12','cc-3']];let count=0;worlds.forEach(([si,tid,cid])=>{const cleared=localStorage.getItem(STORAGE_KEY+'_cleared_'+si);const t=document.getElementById(tid);if(t){if(cleared)t.classList.add('unlocked');else t.classList.remove('unlocked')}const cc=document.getElementById(cid);if(cc){if(cleared){cc.classList.add('unlocked');count++;const L=langData[currentLang]||langData.ko;cc.querySelector('.collect-card-status').textContent='✅ '+(L.collectUnlocked||'획득 완료!')}else{cc.classList.remove('unlocked');const L=langData[currentLang]||langData.ko;cc.querySelector('.collect-card-status').textContent='🔒 '+(L.collectLocked||'미획득')}}});const ct=document.getElementById('collect-count-text');if(ct){const L=langData[currentLang]||langData.ko;ct.textContent=(L.collectCount||'수집 현황')+': '+count+' / 4';if(count===4)ct.textContent='🎉 '+ct.textContent+' ✨'}}
@@ -881,7 +893,7 @@ function openModal(id){document.getElementById(id).style.display='flex';if(id===
 function closeAllModals(){document.querySelectorAll('.modal-overlay').forEach(m=>m.style.display='none')}
 function toggleMusic(){const m=document.getElementById('bgm');if(m){if(m.paused)m.play().catch(e=>{});else m.pause()}}
 function goHome(){if(!isTesting)openModal('home-confirm')}
-function confirmGoHome(){closeAllModals();gameActive=false;document.getElementById('title-screen').classList.remove('hidden');checkCollection()}
+function confirmGoHome(){closeAllModals();gameActive=false;sessionStorage.removeItem('sokoban_resume_idx');document.getElementById('title-screen').classList.remove('hidden');checkCollection()}
 let howToPlayFrom='title';
 
 function showAdConfirm(type){
@@ -937,7 +949,7 @@ function openHowToPlayModal(from){howToPlayFrom=from||'title';closeModal('world-
 function openAboutModal(){openModal('about-modal')}
 function closeHowToPlayModal(){closeModal('how-to-play-modal');if(howToPlayFrom==='world')openModal('world-menu')}
 function selectWorld(i){closeModal('world-menu');currentWorldIdx=i;updateStageButtons(i,'game');openModal('stage-menu')}
-function startGame(i){restartCount=0;updateRestartCount();currentIdx=i;gameActive=true;document.getElementById('title-screen').classList.add('hidden');document.getElementById('back-to-editor-btn').style.display='none';initStage()}
+function startGame(i){restartCount=0;updateRestartCount();currentIdx=i;gameActive=true;sessionStorage.setItem('sokoban_resume_idx',i);document.getElementById('title-screen').classList.add('hidden');document.getElementById('back-to-editor-btn').style.display='none';initStage()}
 function openEditStageMenu(){document.getElementById('title-screen').classList.add('hidden');openModal('edit-world-menu')}
 function selectEditorWorld(i){closeModal('edit-world-menu');updateStageButtons(i,'editor');openModal('edit-stage-menu')}
 function closeEditWorldMenu(){closeModal('edit-world-menu');document.getElementById('title-screen').classList.remove('hidden')}
@@ -1388,4 +1400,4 @@ async function confirmPassword(){
 </script>
 
 </body>
-        </html>
+                                                                                                                                                                                                                 </html>
